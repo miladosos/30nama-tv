@@ -235,7 +235,7 @@
   };
 
   function bootError(e) {
-    N.splashReady(); rail.root.classList.add('gone'); rootEl && (rootEl.innerHTML = '');
+    N.splashReady(); if (rail.root) rail.root.classList.add('gone'); rootEl && (rootEl.innerHTML = ''); // no rail yet when api.init fails
     var r = el('div', 'screen enter'); content.innerHTML = ''; content.appendChild(r); rootEl = r; current = null;
     var w = el('div', 'center-msg'); w.appendChild(N.ui.icon('warn'));
     w.appendChild(el('div', 'm', N.t('error')));

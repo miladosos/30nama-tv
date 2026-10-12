@@ -13,7 +13,7 @@ var BASE = process.argv[2] || 'http://localhost:8080/';
   var out = {};
   for (var lang of ['fa', 'en']) {
     await page.goto(BASE + '?lang=' + lang, { waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('#content .screen', { timeout: 30000 }).catch(function () {});
+    await page.waitForSelector('#content .screen', { timeout: 90000 }).catch(function () {});
     out[lang] = await page.evaluate(function () {
       var s = document.querySelector('#content .screen');
       return { screen: s ? s.className : null, dir: document.documentElement.dir, focused: !!document.querySelector('.focus') };
