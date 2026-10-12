@@ -1,27 +1,33 @@
-# 30nama native app for Samsung Tizen TV
+# 30nama TV for Samsung Tizen
 
-A Samsung Tizen TV app: an unofficial client for 30nama.com.
+An unofficial 30nama.com client for Samsung Tizen TVs, designed after the Apple TV app. Persian by default, with English as the alternative.
 
-![30nama TV](docs/images/poster.png)
+![30nama TV](docs/images/home.jpg)
 
 > **Disclaimer:** This is an unofficial, community project. It is not affiliated with, endorsed by, or supported by 30nama. You need your own valid 30nama subscription to use it. No content is bundled with this app.
 
 ## Features
 
-- Sign in by scanning a QR code with your phone
-- TV UI: hero banner, rows, details pages, search, remote-friendly navigation
-- Samsung AVPlay player with HLS playback at the highest available quality
-- Persian (fa) and English (en) subtitles
-- Persian UI with full right-to-left support
+- Apple TV (tvOS) style UI: floating sidebar, hero that scrolls away into shelves, product-style details pages
+- Official 30nama branding; Persian UI with full right-to-left support, English titles everywhere
+- Sign in by scanning a QR code with your phone (login required)
+- Continue Watching with real progress, plus an In Progress section where you can remove items
+- Watchlist row and My List
+- Details with inline seasons and episodes, cast, resume and start over
+- Player: -30s / play-pause / +30s / next episode, quality and audio (original, 5.1, stereo) menus, episodes panel
+- Persian and English subtitles with live appearance settings: colour, size, background, position, weight
+- Samsung AVPlay with HLS playback at the highest available quality (HTML5 + hls.js fallback)
 - Optional TMDB enrichment: trending rows, cast and crew, reviews, recommendations
 
 ## Screenshots
 
-| Home | Browse |
+| Login | Details |
 |---|---|
-| ![Home](docs/images/home-hero.png) | ![Browse](docs/images/home-browse.png) |
-| **Details** | **Search** |
-| ![Details](docs/images/details.png) | ![Search](docs/images/search.png) |
+| ![Login](docs/images/login.jpg) | ![Details](docs/images/details.jpg) |
+| **Episodes** | **Search** |
+| ![Episodes](docs/images/episodes.jpg) | ![Search](docs/images/search.jpg) |
+| **Player** | |
+| ![Player](docs/images/player.jpg) | |
 
 ## Install
 
@@ -29,7 +35,7 @@ A Samsung Tizen TV app: an unofficial client for 30nama.com.
 
 1. Turn on Developer Mode on the TV: open Apps, type `12345`, switch Developer mode on, enter your PC's IP address, then reboot the TV.
 2. Install [TizenBrew](https://github.com/reisxd/TizenBrew/blob/main/docs/README.md) on the TV with the TizenBrew Installer (one-time).
-3. In TizenBrew open Module Manager, Add GitHub Module, and enter `msharifi99/30nama-tizenos`.
+3. In TizenBrew open Module Manager, Add GitHub Module, and enter `miladosos/30nama-tv`.
 4. Launch "30nama" from the TizenBrew home screen.
 
 Playback uses the TV's HTML5 player here (AVPlay is not available inside TizenBrew).
@@ -37,7 +43,7 @@ Playback uses the TV's HTML5 player here (AVPlay is not available inside TizenBr
 ### Option 2: prebuilt .wgt
 
 1. Turn on Developer Mode on the TV: open Apps, type `12345`, switch Developer mode on, enter your PC's IP address, then reboot the TV.
-2. Download `30nama-v*.wgt` from the [latest release](https://github.com/msharifi99/30nama-tizenos/releases/latest).
+2. Download `30nama-v*.wgt` from the [latest release](https://github.com/miladosos/30nama-tv/releases/latest).
 3. Install [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung/releases/latest) (Windows, Linux, macOS or Android). It handles your Samsung certificate and re-signs the package for your TV.
 4. In Apps2Samsung select your TV, choose a custom `.wgt`, pick the downloaded file and install. Tizen 7+ TVs ask you to sign in to a Samsung account once to create a certificate.
 
@@ -93,6 +99,10 @@ build.sh      build, sign and install
 install-wizard.sh  guided TV setup
 ```
 
+## Credits
+
+This project started as a fork of [msharifi99/30nama-tizenos](https://github.com/msharifi99/30nama-tizenos) by Rebin Sharifi, which built the original Tizen app, the QR login, the AVPlay player, the TizenBrew packaging and the build tooling. Kudos and thanks to Rebin: this version is a redesign built on top of that work.
+
 ## License
 
-Released under the [MIT License](LICENSE). The Vazirmatn font in `tizen-app/fonts/` is licensed under the SIL Open Font License (see `tizen-app/fonts/OFL.txt`).
+Released under the [MIT License](LICENSE), keeping the original copyright notice. The Vazirmatn font in `tizen-app/fonts/` is licensed under the SIL Open Font License (see `tizen-app/fonts/OFL.txt`).

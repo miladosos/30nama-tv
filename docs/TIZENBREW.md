@@ -24,7 +24,7 @@ Source: TizenBrew service code,
 [moduleLoader.js](https://github.com/reisxd/TizenBrew/blob/main/tizenbrew-app/TizenBrew/service-nextgen/service/utils/moduleLoader.js)
 and [service index.js](https://github.com/reisxd/TizenBrew/blob/main/tizenbrew-app/TizenBrew/service-nextgen/service/index.js).
 
-- A module id is `npm/<package>` or `gh/<user>/<repo>`. The module manager UI ("Add GitHub Module") prepends `gh/` to what the user types ([ModuleManager.jsx](https://github.com/reisxd/TizenBrew/blob/main/tizenbrew-app/TizenBrew/tizenbrew-ui/src/pages/ModuleManager.jsx)), so users enter `msharifi99/30nama-tizenos`.
+- A module id is `npm/<package>` or `gh/<user>/<repo>`. The module manager UI ("Add GitHub Module") prepends `gh/` to what the user types ([ModuleManager.jsx](https://github.com/reisxd/TizenBrew/blob/main/tizenbrew-app/TizenBrew/tizenbrew-ui/src/pages/ModuleManager.jsx)), so users enter `miladosos/30nama-tv`.
 - Metadata is read from `https://cdn.jsdelivr.net/<id>/package.json`. GitHub modules are therefore served through the **jsDelivr CDN** (default branch, cached by jsDelivr). No GitHub API or auth is involved; the repo must be public.
 - The app runs from a local proxy on the TV: `http://127.0.0.1:8081/module/<url-encoded id>/<appPath>`, which fetches each file from jsDelivr and sets `Access-Control-Allow-Origin: *` and a content type from the file extension.
 - Launch: the TizenBrew UI registers the module's `keys` and then does `location.href = appPath` ([Modules.jsx](https://github.com/reisxd/TizenBrew/blob/main/tizenbrew-app/TizenBrew/tizenbrew-ui/src/components/Modules.jsx)). The page therefore runs inside the TizenBrew widget with TizenBrew's privileges from its [config.xml](https://github.com/reisxd/TizenBrew/blob/main/tizenbrew-app/TizenBrew/config.xml) (`internet`, `tv.inputdevice`, `network.public`, ..., `access origin="*"`), not ours.
@@ -47,7 +47,7 @@ and [service index.js](https://github.com/reisxd/TizenBrew/blob/main/tizenbrew-a
 
 ## Updating
 
-jsDelivr caches the default branch for a while. After pushing, purge with `https://purge.jsdelivr.net/gh/msharifi99/30nama-tizenos/package.json` (and other changed files).
+jsDelivr caches the default branch for a while. After pushing, purge with `https://purge.jsdelivr.net/gh/miladosos/30nama-tv/package.json` (and other changed files).
 
 ## Prebuilt .wgt route
 
