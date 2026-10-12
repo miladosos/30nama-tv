@@ -63,6 +63,10 @@ jobs:
           ls -l dist
           rm -f stage/throwaway.p12
 
+      - name: Show Tizen CLI log on failure
+        if: failure()
+        run: tail -n 80 "$HOME/tizen-studio-data/cli/logs/cli.log" || true
+
       - name: Verify package contents
         run: |
           WGT="$(ls dist/*.wgt | head -1)"
