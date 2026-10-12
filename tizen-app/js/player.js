@@ -418,8 +418,16 @@
     if (hasNext && tn(o.end) > 0 && t >= tn(o.end) && !unState) P.showUpNext();
     else if (unState && tn(o.end) > 0 && t < tn(o.end) - 3 && !unState.dismissed) P.hideUpNext(true);
   };
-  P.showSkip = function (label) { var b = $('skip-btn'); if (b._l !== label) { b._l = label; b.textContent = label; } b.classList.add('show'); };
+  // Skip intro/recap owns OK: appearing pulls focus off the controls row (Up from the row returns to it); dimmed while a control has focus
+  P.showSkip = function (label) {
+    var b = $('skip-btn'); if (b._l !== label) { b._l = label; b.textContent = label; }
+    if (!b.classList.contains('show')) { b.classList.add('show'); if (P.ctl >= 0) unfocusCtl(); }
+    syncSkip();
+  };
   P.hideSkip = function () { $('skip-btn').classList.remove('show'); P.skip = null; };
+  function syncSkip() { $('skip-btn').classList.toggle('idle', P.ctl >= 0); }
+  function doSkip() { if (!P.skip || !P.be) return; var to = P.skip.to; P.hideSkip(); P.be.seek(to); P.showOsd(); }
+  $('skip-btn').onclick = doSkip;
   P.showOsd = function () {
     $('osd').classList.remove('off'); $('player').classList.add('osd-on'); clearTimeout(P.osdTimer);
     P.osdTimer = setTimeout(function () {
@@ -471,7 +479,7 @@
     u.querySelector('.th').style.backgroundImage = cv ? 'url("' + cv + '")' : '';
     $('un-play').textContent = N.t('playNow'); $('un-cred').textContent = N.t('credits');
     unState = { sel: 'play', dismissed: false, auto: auto };
-    uSel();
+    uSel(); if (P.ctl >= 0) unfocusCtl(); // like Skip: the card takes OK
     u.classList.remove('hold', 'count'); u.classList.add('show');
     if (auto) { void u.offsetWidth; u.classList.add('count'); }
     u.querySelector('.cd').style.display = auto ? '' : 'none';
@@ -509,9 +517,9 @@
     P.ctls = P.tbtns.concat(P.btns); syncPP();
   }
   function syncPP() { var b = P.tbtns[1]; if (b && b._pp !== P.paused) { b._pp = P.paused; N.ui.setIcon(b.firstChild, P.paused ? 'play' : 'pause'); } }
-  function focusCtl(n) { if (!P.ctls[n]) return; P.ctl = n; N.nav.focus(P.ctls[n], true); P.showOsd(); }
+  function focusCtl(n) { if (!P.ctls[n]) return; P.ctl = n; N.nav.focus(P.ctls[n], true); P.showOsd(); syncSkip(); }
   function focusKind(k) { for (var i = 0; i < P.ctls.length; i++) if (P.ctls[i]._kind === k) return focusCtl(i); focusCtl(1); }
-  function unfocusCtl() { P.ctl = -1; N.nav.clear(); P.showOsd(); }
+  function unfocusCtl() { P.ctl = -1; N.nav.clear(); P.showOsd(); syncSkip(); }
   // Left/Right follow the on-screen order (transport is LTR, the glyph buttons follow the UI direction)
   function ctlMove(dir) {
     var a = P.ctls.slice().sort(function (x, y) { return x.getBoundingClientRect().left - y.getBoundingClientRect().left; });
@@ -744,7 +752,7 @@
       if (k === K.LEFT || k === K.RIGHT) { ctlMove(k === K.LEFT ? 'left' : 'right'); return true; }
       if (k === K.DOWN || back) { unfocusCtl(); return true; }
       if (k === K.ENTER) { var c = P.ctls[P.ctl]; if (c._tp) c.onclick(); else openPop(c._kind); return true; }
-      if (k === K.UP) return true;
+      if (k === K.UP) { if (P.skip || (unState && $('upnext').classList.contains('show'))) unfocusCtl(); return true; } // up to Skip / Up next
     }
     if (back || k === K.STOP) { P.close(); return true; }
     P.showOsd();
@@ -761,7 +769,7 @@
     if (k === K.PLAY) { if (P.paused) P.togglePause(); return true; }
     if (k === K.PAUSE) { if (!P.paused) P.togglePause(); return true; }
     if (k === K.ENTER) {
-      if (P.skip) { P.be.seek(P.skip.to); return true; }
+      if (P.skip) { doSkip(); return true; }
       P.togglePause(); return true;
     }
     if (k === K.LEFT) { P.seekBy(-10); return true; }

@@ -67,7 +67,8 @@ html[dir=rtl] #scrub .bubble>div{direction:rtl}
 
 /* ---------- skip intro / up next (bottom-end, above the glyph buttons; never move with the OSD) ---------- */
 #skip-btn{position:absolute;bottom:238px;inset-inline-end:90px;height:72px;padding:0 36px;border-radius:999px;background:#fff;color:#000;font-size:31px;font-weight:600;line-height:72px;z-index:6;opacity:0;transform:translateY(16px);transition:opacity 300ms,transform 300ms var(--e-focus);pointer-events:none}
-#skip-btn.show{opacity:1;transform:none}
+#skip-btn.show{opacity:1;transform:none;pointer-events:auto}
+#skip-btn.idle{background:var(--fill-1);color:var(--label-1)}
 #upnext{position:absolute;bottom:238px;inset-inline-end:90px;width:436px;padding:16px;border-radius:30px;background:rgba(28,28,30,.85);box-shadow:0 20px 50px rgba(0,0,0,.45);z-index:6;opacity:0;transform:translateY(16px);transition:opacity 300ms,transform 300ms var(--e-focus);pointer-events:none}
 #upnext.show{opacity:1;transform:none}
 #upnext .th{position:relative;width:404px;height:228px;border-radius:14px;overflow:hidden;background:var(--bg-3) center/cover no-repeat}
