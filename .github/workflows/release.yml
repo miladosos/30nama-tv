@@ -52,20 +52,26 @@ jobs:
           grep -o 'version="[^"]*"' stage/web/config.xml | head -1
 
       - name: Build and package with a throwaway author certificate
+        # On Linux the Tizen CLI keeps profile passwords in the Secret Service keyring; the runner has none, so signing
+        # would read back an empty password ("Invaild password"). Run everything inside a throwaway unlocked keyring.
         run: |
-          CERT_PW="$(openssl rand -hex 12)"
-          tizen certificate -a 30nama-community -p "$CERT_PW" -f throwaway -- "$PWD/stage"
-          tizen security-profiles add -n ci -a "$PWD/stage/throwaway.p12" -p "$CERT_PW"
-          tizen cli-config "profiles.path=$HOME/tizen-studio-data/profile/profiles.xml"
-          tizen build-web -out "$PWD/stage/out" -- "$PWD/stage/web"
-          mkdir -p dist
-          tizen package -t wgt -s ci -o "$PWD/dist" -- "$PWD/stage/out"
+          sudo apt-get update -qq && sudo apt-get install -y -qq gnome-keyring dbus-x11 > /dev/null
+          export CERT_PW="$(openssl rand -hex 12)"
+          dbus-run-session -- bash -euo pipefail -c '
+            echo -n "$CERT_PW" | gnome-keyring-daemon --unlock --components=secrets > /dev/null
+            tizen certificate -a 30nama-community -p "$CERT_PW" -f throwaway -- "$PWD/stage"
+            tizen security-profiles add -n ci -a "$PWD/stage/throwaway.p12" -p "$CERT_PW"
+            tizen cli-config "profiles.path=$HOME/tizen-studio-data/profile/profiles.xml"
+            tizen build-web -out "$PWD/stage/out" -- "$PWD/stage/web"
+            mkdir -p dist
+            tizen package -t wgt -s ci -o "$PWD/dist" -- "$PWD/stage/out"
+          '
           ls -l dist
           rm -f stage/throwaway.p12
 
       - name: Show Tizen CLI log on failure
         if: failure()
-        run: tail -n 80 "$HOME/tizen-studio-data/cli/logs/cli.log" || true
+        run: grep -E "ERROR|Caused by" "$HOME/tizen-studio-data/cli/logs/cli.log" | tail -n 20 || true  # TRACE lines echo passwords
 
       - name: Verify package contents
         run: |
