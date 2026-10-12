@@ -1,4 +1,5 @@
-// Static checks for CI (Node 18+, needs `acorn`): every app script parses as ES5, and every file index.html loads exists.
+// Static checks for CI (Node 18+, needs `acorn`): every app script parses as ES5, every file index.html loads exists,
+// and the app version agrees across config.js, config.xml and package.json.
 // Usage: node tizen-app/tools/check.js   (from the repo root, after `npm i --no-save acorn`)
 var fs = require('fs'), path = require('path'), acorn = require('acorn');
 var APP = path.join(__dirname, '..'), bad = 0;
@@ -26,6 +27,11 @@ while ((m = re.exec(html))) {
 // 3. config.xml declares a semver version
 var ver = /<widget [^>]*version="([^"]*)"/.exec(fs.readFileSync(path.join(APP, 'config.xml'), 'utf8'));
 if (!ver || !/^\d+\.\d+\.\d+$/.test(ver[1])) fail('config.xml widget version is not x.y.z');
+
+// 4. the version shown in Settings matches config.xml and package.json (tools/set-version.js keeps them together)
+var appVer = /appVersion:\s*'([^']*)'/.exec(fs.readFileSync(path.join(APP, 'js', 'config.js'), 'utf8'));
+var pkgVer = JSON.parse(fs.readFileSync(path.join(APP, '..', 'package.json'), 'utf8')).version;
+if (!appVer || !ver || appVer[1] !== ver[1] || pkgVer !== ver[1]) fail('version mismatch: config.js ' + (appVer && appVer[1]) + ', config.xml ' + (ver && ver[1]) + ', package.json ' + pkgVer + ' (run tools/set-version.js)');
 
 console.log(bad ? bad + ' problem(s)' : 'all checks passed');
 process.exit(bad ? 1 : 0);

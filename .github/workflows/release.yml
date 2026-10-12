@@ -1,8 +1,10 @@
 name: Release wgt
 
 # Push a tag like v1.2.3 to run CI, build tizen-app/ into a .wgt signed with a throwaway author certificate
-# generated on the runner, and publish it as a GitHub Release asset. A manual run (Actions > Release wgt > Run workflow)
-# only builds and uploads the .wgt as a workflow artifact.
+# generated on the runner, and publish it as a GitHub Release asset. The tag is the version: it is written into
+# config.js (shown in Settings), config.xml and package.json for the build, then committed back to main so the
+# source and the TizenBrew module (served from main) show it too. A manual run (Actions > Release wgt > Run workflow)
+# only builds and uploads the .wgt as a workflow artifact, with the version already in the source.
 # The package is meant to be RE-SIGNED by the user's installer
 # (e.g. Apps2Samsung) with their own Samsung certificate, so the throwaway
 # cert is discarded after the build. No TMDB token is ever included.
@@ -38,18 +40,21 @@ jobs:
           /tmp/web-cli.bin --accept-license "$HOME/tizen-studio" < /dev/null
           echo "$HOME/tizen-studio/tools/ide/bin" >> "$GITHUB_PATH"
 
+      - name: Set the version from the tag
+        if: github.ref_type == 'tag'
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          [[ "$VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "tag must look like v1.2.3"; exit 1; }
+          node tizen-app/tools/set-version.js "$VER"
+
       - name: Stage sources (no tools/, no token)
         run: |
           mkdir -p stage/web
           cp -r tizen-app/. stage/web/
           rm -rf stage/web/tools stage/web/js/tmdb-token.js
           echo '/* TMDB disabled */' > stage/web/js/tmdb-token.js
-          VER="${GITHUB_REF_NAME#v}"
-          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
-            [[ "$VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "tag must look like v1.2.3"; exit 1; }
-            sed -i -E "s/(<widget [^>]*version=\")[^\"]*(\")/\1${VER}\2/" stage/web/config.xml
-          fi
           grep -o 'version="[^"]*"' stage/web/config.xml | head -1
+          grep -o "appVersion: '[^']*'" stage/web/js/config.js
 
       - name: Build and package with a throwaway author certificate
         # On Linux the Tizen CLI keeps profile passwords in the Secret Service keyring; the runner has none, so signing
@@ -81,6 +86,11 @@ jobs:
           unzip -p "$WGT" 'js/*' config.xml index.html | grep -q 'eyJ' && { echo "JWT-like string in wgt"; exit 1; } || true
           unzip -l "$WGT" | grep -q author-signature.xml
           unzip -l "$WGT" | grep -q signature1.xml
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            VER="${GITHUB_REF_NAME#v}"
+            unzip -p "$WGT" js/config.js | grep -q "appVersion: '${VER}'" || { echo "wgt config.js is not ${VER}"; exit 1; }
+            unzip -p "$WGT" config.xml | grep -q "version=\"${VER}\"" || { echo "wgt config.xml is not ${VER}"; exit 1; }
+          fi
           mv "$WGT" "dist/30nama-${GITHUB_REF_NAME}.wgt"
 
       - uses: actions/upload-artifact@v4
@@ -98,3 +108,25 @@ jobs:
             Prebuilt `.wgt` for Samsung Tizen TVs. It is NOT signed for your TV:
             install it with an installer that re-signs with your own certificate
             (see the README, Option 2). Also installable as a TizenBrew module.
+
+  # Commit the tag's version to main (only when the tag is on main), so the source and TizenBrew show it as well.
+  # Pushes made with GITHUB_TOKEN do not trigger workflows, so this cannot loop.
+  sync-version:
+    needs: wgt
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Commit the version to main
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" HEAD; then echo "tag is not on main; leaving main alone"; exit 0; fi
+          node tizen-app/tools/set-version.js "$VER"
+          if git diff --quiet; then echo "main already at $VER"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Set version to $VER (from tag $GITHUB_REF_NAME)"
+          git push origin HEAD:main || { git pull --rebase origin main && git push origin HEAD:main; }

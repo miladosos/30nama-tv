@@ -88,15 +88,15 @@ Then open http://localhost:8080/. The proxy forwards API and HLS requests to avo
 
 ### CI and releases
 
-Every push to `main` and every pull request runs `.github/workflows/ci.yml`: an ES5 syntax check of `tizen-app/js` (`tizen-app/tools/check.js`) and a headless smoke test that boots the app in Persian and English (`tizen-app/tools/smoke.js`).
+Every push to `main` and every pull request runs `.github/workflows/ci.yml`: an ES5 syntax check of `tizen-app/js` plus a version-consistency check (`tizen-app/tools/check.js`) and a headless smoke test that boots the app in Persian and English (`tizen-app/tools/smoke.js`).
 
 To publish a release, push a version tag:
 
 ```
-git tag v1.0.1 && git push origin v1.0.1
+git tag v1.0.3 && git push origin v1.0.3
 ```
 
-`.github/workflows/release.yml` runs CI, builds the `.wgt` (version taken from the tag), and attaches it to a GitHub Release.
+`.github/workflows/release.yml` runs CI, builds the `.wgt`, and attaches it to a GitHub Release. The tag is the version: the workflow writes it into `config.js` (shown in Settings), `config.xml` and `package.json` with `tizen-app/tools/set-version.js`, then commits that back to `main` so the TizenBrew module shows it too. No manual version bump is needed; run `git pull` after a release to get the bot's commit.
 
 ## Structure
 
