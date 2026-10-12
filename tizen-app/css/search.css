@@ -1,24 +1,30 @@
-/* search screen (screens/search.js): linear keyboard at y=170, 6-column poster grid from y=350. */
+/* search screen (screens/search.js): query + grid keyboard on the start side (x 90..650), 4-column poster grid on the end side (x 730..1830). */
 /* ---------- search ---------- */
-.s-page{position:absolute;left:0;top:0;width:1920px;height:1080px;transition:transform var(--d-move) var(--e-move)}
-.noanim .s-page{transition:none!important}
-.s-q{position:absolute;top:64px;left:90px;right:90px;height:72px;text-align:center;font-size:48px;line-height:72px;font-weight:700;white-space:nowrap;overflow:hidden}
-.s-q .ph-t{font-weight:500;color:var(--label-3)}
-.s-q .caret{display:inline-block;width:3px;height:52px;margin:0 4px;background:#fff;vertical-align:middle;animation:blink 1s steps(1) infinite}
+.s-page{position:absolute;left:0;top:0;width:1920px;height:1080px}
+.s-kbp{position:absolute;top:0;inset-inline-start:90px;width:560px;height:1080px}
+.s-qi{position:absolute;top:84px;inset-inline-start:0;width:40px;height:40px;color:var(--label-3)}
+.s-qi .ico{width:40px;height:40px}
+.s-q{position:absolute;top:64px;inset-inline-start:56px;width:504px;height:80px;display:flex;align-items:center;border-bottom:2px solid var(--label-4);font-size:44px;line-height:80px;font-weight:700;white-space:nowrap;overflow:hidden}
+.s-q.long{justify-content:flex-end}
+.s-q .qt{flex:none}
+.s-q .ph-t{font-size:31px;font-weight:500;color:var(--label-3);overflow:hidden;text-overflow:ellipsis}
+.s-q .caret{flex:none;display:inline-block;width:3px;height:48px;margin:0 4px;background:#fff;animation:blink 1s steps(1) infinite}
 body.calm .s-q .caret{animation:none}
 @keyframes blink{50%{opacity:0}}
-.kb-w{position:absolute;top:170px;left:0;width:1920px;height:76px}
-.kb{position:absolute;top:0;left:0;width:1920px;display:flex;gap:12px;padding-inline-start:90px;transition:transform var(--d-move) var(--e-move)}
-.key{flex:none;height:76px;border-radius:14px;font-size:40px;font-weight:500;color:var(--label-2);text-align:center;line-height:76px;white-space:nowrap;transform:scale(1);transition:transform var(--d-focus-out) var(--e-unfocus)}
-.key.fn{background:var(--fill-3);font-size:25px;font-weight:600}
+.kb{position:absolute;top:190px;left:0;width:560px}
+.key{position:absolute;height:72px;border-radius:12px;background:var(--fill-3);font-size:36px;font-weight:500;color:var(--label-1);text-align:center;line-height:72px;white-space:nowrap;transform:scale(1);transition:transform var(--d-focus-out) var(--e-unfocus)}
+.kb.fa .key{font-size:38px}
+.key.fn{background:var(--fill-2);font-size:27px;font-weight:600;color:var(--label-2)}
 .key.bs{font-size:34px}
 .key.lg{font-family:"Vz",sans-serif}
 .key .ico{width:34px;height:34px;vertical-align:middle;margin-top:-4px}
-.key.focus{color:#000;transform:scale(1.15);transition:transform 200ms var(--e-focus)}
+.key.focus{color:var(--focus-ink);transform:scale(1.1);transition:transform 200ms var(--e-focus)}
 .key.mirror{transform:scaleX(-1)}
-.key.mirror.focus{transform:scale(-1.15,1.15)}
-.rh{position:absolute;top:282px;inset-inline-start:90px;max-width:1740px;font-size:38px;line-height:48px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.key.mirror.focus{transform:scale(-1.1,1.1)}
+.s-res{position:absolute;top:0;inset-inline-start:730px;width:1100px;transition:transform var(--d-move) var(--e-move)}
+.noanim .s-res{transition:none!important}
+.rh{position:absolute;top:80px;inset-inline-start:0;max-width:1100px;font-size:38px;line-height:48px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rh.nores{font-size:31px;font-weight:500;color:var(--label-2)}
-.rgrid{position:absolute;top:350px;inset-inline-start:90px;width:1740px;display:flex;flex-wrap:wrap;column-gap:48px;row-gap:40px;transition:opacity 200ms var(--e-fade)}
+.rgrid{position:absolute;top:160px;inset-inline-start:0;width:1100px;display:flex;flex-wrap:wrap;column-gap:32px;row-gap:40px;transition:opacity 200ms var(--e-fade)}
 .rgrid.sw{opacity:0;transition:opacity 120ms var(--e-fade)}
 .rgrid .gcell{width:250px;height:439px}
