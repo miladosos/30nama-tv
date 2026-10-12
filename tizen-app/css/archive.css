@@ -1,0 +1,18 @@
+/* archive browse + grid pages, My List (screens/archive.js). */
+/* ---------- archive ---------- */
+.arch{position:absolute;left:0;top:0;width:1920px;height:1080px;transition:transform var(--d-move) var(--e-move)}
+.noanim .a-track{transition:none!important}
+.arch .ah{position:absolute;top:60px;inset-inline-start:90px;max-width:1100px;font-size:57px;font-weight:700;line-height:var(--lh-title);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.arch .ah .cnt{font-size:25px;font-weight:500;color:var(--label-2);margin-inline-start:20px}
+.arch .sorts{position:absolute;top:64px;inset-inline-end:90px;display:flex}
+.arch .sorts .pill+.pill{margin-inline-start:12px}
+.arch .a-sec{position:absolute;left:0;width:1920px}
+.arch .a-sec.cats{top:170px;height:340px}
+.arch .a-sec.gens{top:534px}
+.arch .sec-h{position:absolute;top:0;inset-inline-start:90px;font-size:38px;line-height:48px;font-weight:700}
+.arch .a-track{position:absolute;top:72px;left:0;width:1920px;display:flex;gap:40px;padding-inline-start:90px;transition:transform var(--d-move) var(--e-move)}
+.arch .a-grid{position:absolute;top:72px;inset-inline-start:90px;width:1740px;display:flex;flex-wrap:wrap;column-gap:40px;row-gap:40px;padding-bottom:120px}
+.ggrid{position:absolute;top:180px;inset-inline-start:90px;width:1740px;display:flex;flex-wrap:wrap;column-gap:48px;row-gap:40px;padding-bottom:120px}
+.ggrid .gcell{width:250px;height:439px}
+.ggrid .sk-p{width:250px;height:375px;border-radius:12px;background:var(--fill-3)}
+.arch .nores{position:absolute;top:300px;inset-inline-start:90px;font-size:31px;line-height:var(--lh-body);color:var(--label-2)}

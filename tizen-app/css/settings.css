@@ -1,0 +1,51 @@
+/* settings screen (screens/settings.js): tvOS lists. */
+/* ---------- settings ---------- */
+.set .st-t{position:absolute;top:60px;left:0;width:1920px;text-align:center;font-size:57px;line-height:var(--lh-title);font-weight:700}
+.set .st-art{position:absolute;inset-inline-start:90px;width:810px;top:0;bottom:0;text-align:center}
+.set .st-art .mk{position:absolute;top:250px;height:280px;left:50%;transform:translateX(-50%)}
+.set .st-art .an{position:absolute;top:590px;left:0;width:100%;font-size:48px;line-height:var(--lh-title);font-weight:700}
+.set .st-art .ver{position:absolute;top:666px;left:0;width:100%;font-size:25px;line-height:var(--lh-cap);color:var(--label-2)}
+.set .st-art .un{position:absolute;top:712px;left:105px;width:600px;font-size:23px;line-height:var(--lh-cap);color:var(--label-3)}
+.set .slist-w{position:absolute;top:170px;bottom:0;inset-inline-start:940px;width:910px;padding:8px 20px 0;box-sizing:border-box;overflow:hidden}
+.set .slist-w.scr{-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 48px);mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 48px)}
+.set .slist-w.in{animation:slIn 240ms var(--e-sheet)}
+.set .slist-w.back{animation:slBack 240ms var(--e-sheet)}
+@keyframes slIn{from{opacity:0;transform:translateX(calc(var(--dir) * 40px))}to{opacity:1;transform:none}}
+@keyframes slBack{from{opacity:0;transform:translateX(calc(var(--dir) * -40px))}to{opacity:1;transform:none}}
+.set .slist{position:relative;padding-bottom:120px;transition:transform var(--d-move) var(--e-move)}
+.set .sg{font-size:23px;line-height:34px;font-weight:600;color:var(--label-3);margin:40px 0 16px;padding-inline-start:32px}
+.set .sg:first-child{margin-top:0}
+.set .orow{width:870px;height:80px;margin-bottom:8px;border-radius:16px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;font-size:31px;font-weight:500;white-space:nowrap;transform:scale(1);transition:transform var(--d-focus-out) var(--e-unfocus)}
+.set .orow.focus{color:#000;transform:scale(1.03);transition:transform var(--d-focus-in) var(--e-focus)}
+.set .orow .lb{flex:none;max-width:560px;margin-inline-end:24px;overflow:hidden;text-overflow:ellipsis}
+.set .orow .v{flex:1;min-width:0;text-align:end;font-size:31px;font-weight:400;color:var(--label-2);overflow:hidden;text-overflow:ellipsis}
+html[dir=rtl] .set .orow .v.latin{text-align:left}
+.set .orow.focus .v{color:rgba(0,0,0,.6)}
+.set .orow .chev{width:30px;height:30px;margin-inline-start:12px;color:var(--label-3)}
+.set .orow.focus .chev{color:rgba(0,0,0,.45)}
+.set .orow.danger{color:var(--danger)}
+.set .orow.danger.focus{color:#000}
+.set .ut{display:inline-flex;align-items:center;gap:12px}
+.set .udot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none}
+.set .sl-h{display:flex;align-items:center;gap:16px;font-size:38px;line-height:48px;font-weight:700;margin-bottom:24px;padding-inline-start:20px}
+.set .sl-h .ico{width:34px;height:34px;color:var(--label-2)}
+.set .sl-h .ico.back{transform:scaleX(-1)}
+html[dir=rtl] .set .sl-h .ico.back{transform:none}
+.set .orow.chk{justify-content:flex-start;position:relative;padding-inline-start:72px}
+.set .orow.chk .ck{position:absolute;inset-inline-start:24px;top:25px;width:30px;height:30px;visibility:hidden}
+.set .orow.chk.sel .ck{visibility:visible}
+.set .sw{display:block;flex:none;width:24px;height:24px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.set .orow.focus .sw{box-shadow:0 0 0 2px rgba(0,0,0,.2)}
+.set .orow.chk .sw{margin-inline-start:auto}
+.set .swv{display:inline-flex;align-items:center;gap:12px;vertical-align:middle}
+/* subtitle appearance preview: takes the artwork's place (crossfade); cue styling comes from player.css .subs/.sb-* via N.subStyle.apply */
+.set .st-art>.mk,.set .st-art>.an,.set .st-art>.ver,.set .st-art>.un{transition:opacity 200ms var(--e-fade)}
+.set .st-art.pv>.mk,.set .st-art.pv>.an,.set .st-art.pv>.ver,.set .st-art.pv>.un{opacity:0}
+.set .st-pv{position:absolute;top:250px;left:0;width:810px;height:456px;border-radius:24px;overflow:hidden;opacity:0;transition:opacity 200ms var(--e-fade);
+  background:radial-gradient(55% 45% at 74% 30%,rgba(255,190,120,.5),rgba(255,190,120,0) 70%),radial-gradient(60% 34% at 50% 92%,rgba(225,215,195,.38),rgba(225,215,195,0) 75%),radial-gradient(40% 40% at 18% 46%,rgba(110,150,230,.32),rgba(110,150,230,0) 70%),linear-gradient(180deg,#273349 0%,#3a2e40 58%,#16121b 100%)}
+.set .st-art.pv .st-pv{opacity:1}
+/* canvas at 2x the frame (1620px, scale .5 from bottom-left) so cues use the player's own px sizes and wrap like #subtitle (84px = its 100px gutter at 1620/1920) */
+.set .pv-cues{position:absolute;left:0;width:1620px;padding:0 84px;box-sizing:border-box;transform:scale(.5);transform-origin:0 100%;text-align:center;line-height:1.4}
+.set .pv-cues .subs{margin-top:12px}
+.set .pv-cues .sub-fa{font-family:"VzFD","Vz",sans-serif;line-height:1.6}
+.set .note{font-size:23px;line-height:var(--lh-cap);color:var(--label-3);margin-top:8px;padding-inline:32px}

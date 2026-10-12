@@ -46,7 +46,7 @@ async function handleProxy(req, res, q) {
   Object.keys(req.headers).forEach(function (k) { if (FWD.test(k)) headers[k] = req.headers[k]; });
   var body = (req.method !== 'GET' && req.method !== 'HEAD') ? await readBody(req) : null;
   upstream(target, req.method, headers, body, 0, function (err, up, finalUrl) {
-    if (err) { res.writeHead(502); return res.end('proxy error: ' + err.message); }
+    if (err) { if (res.headersSent) return res.destroy(); res.writeHead(502); return res.end('proxy error: ' + err.message); }
     cors(res);
     var ct = up.headers['content-type'] || '';
     if (/mpegurl/i.test(ct) || /\.m3u8(\?|$)/i.test(finalUrl)) {
@@ -62,6 +62,8 @@ async function handleProxy(req, res, q) {
     res.writeHead(up.statusCode, out); up.pipe(res);
   });
 }
+// keep serving if a stray upstream socket error escapes a handler
+process.on('uncaughtException', function (e) { console.error('[devserver] uncaught:', e && e.stack || e); });
 http.createServer(function (req, res) {
   var q = url.parse(req.url, true);
   if (req.method === 'OPTIONS') { cors(res); res.writeHead(204); return res.end(); }

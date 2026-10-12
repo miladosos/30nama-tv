@@ -4,7 +4,7 @@ const b=await p.launch({executablePath:'C:/Program Files/Google/Chrome/Applicati
 const pg=await b.newPage();
 const c=await pg.createCDPSession();
 await pg.goto('http://localhost:8080/',{waitUntil:'domcontentloaded'});
-await pg.evaluate(()=>{localStorage.setItem('n30.guest','true')});
+await pg.evaluate(l=>{localStorage.setItem('n30.guest','true');localStorage.setItem('n30.lang',JSON.stringify(l));},process.env.UI_LANG||'fa');
 await pg.reload({waitUntil:'domcontentloaded'});
 await new Promise(r=>setTimeout(r,8000));
 console.log(await pg.evaluate(()=>document.body.innerText.slice(0,80)));

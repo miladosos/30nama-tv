@@ -5,7 +5,7 @@ Plain HTML/CSS/JS web app (no build step). Base resolution 1920x1080.
 ## Structure
 - `config.xml`, `icon.png` (117), `icon-512.png`: Tizen widget manifest and placeholder icons (`node tools/make-icons.js` regenerates).
 - `index.html`: shell (global `#stage` backdrop, icon `#rail`, `#content`, player layer, splash, AVPlay `<object>`, SVG icon sprite).
-- `css/app.css`: "One Stage" design (tokens, fonts, focus rings, motion; only transform/opacity are animated; RTL via logical properties and `--dir`). Spec: `design/DESIGN.md`.
+- `css/`: "One Stage" design, split per area and loaded in this order: `base.css` (tokens, fonts, reset, shared components), `chrome.css` (stage, sidebar, splash), `login.css`, `home.css`, `details.css`, `search.css`, `archive.css`, `settings.css`, `player.css` (last). Only transform/opacity are animated; RTL via logical properties and `--dir`. Spec: `design/DESIGN.md`.
 - `fonts/`: bundled Vazirmatn woff2 (Regular/Medium/Bold/ExtraBold + Farsi-digit `FD` variants, SIL OFL 1.1).
 - `js/config.js`: constants, API keys (WEBTV verified, ANDROIDTV fallback), key codes, storage and DOM helpers, toast.
 - `js/i18n.js`: en/fa strings, `N.setLang` (sets `lang`/`dir`).
@@ -14,7 +14,7 @@ Plain HTML/CSS/JS web app (no build step). Base resolution 1920x1080.
 - `js/stage.js`: persistent backdrop (two layers, decode-then-crossfade, Ken Burns, poster-bleed fallback).
 - `js/ui.js`: icons, card factory (poster/land/top/grid/tile), meta line, start-anchored tracks, vertical scroll helper, episode tiles.
 - `js/player.js`: AVPlay backend (when `window.webapis.avplay` exists) or `<video>` + hls.js; WebVTT overlay (en/fa/off, size from settings), resume, scrubber with seek bubble, skip intro/recap pill, Up Next card with autoplay countdown, audio/subtitle sheet (Up), episodes sheet (Down), observer heartbeat (10 s).
-- `js/screens.js`: QR login, Home (billboard + rows + Top 10 + continue watching), Details (+ seasons/episodes sheet), Search (on-screen keyboard), Archive (genres + paged grid + sort), Settings (two panes).
+- `js/screens/`: `common.js` (registry `N.screens` + shared helpers `N.sc`), then one file per screen: `login.js`, `home.js`, `details.js`, `search.js`, `archive.js`, `settings.js`. QR login, Home (billboard + rows + Top 10 + continue watching), Details (+ seasons/episodes sheet), Search (on-screen keyboard), Archive (genres + paged grid + sort), Settings (two panes).
 - `js/app.js`: boot, router with page transitions, icon rail (expands on focus), exit/sign-out confirm sheets, splash, Back handling (content -> rail -> exit confirm).
 - `js/lib/`: `qrcode.js` (qrcode-generator 1.4.4), `hls.min.js` (hls.js 1.5.17), both bundled locally.
 - `tools/devserver.js`: static server plus `/proxy?url=` (adds CORS, rewrites m3u8 URIs). The app routes all requests through it only when `location.hostname` is localhost.

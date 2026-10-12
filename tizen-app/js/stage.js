@@ -1,12 +1,12 @@
 /* Stage: one persistent full-bleed backdrop behind every screen. Two image layers crossfade. */
 (function () {
   var S = N.stage = {};
-  var layers = null, stageEl = null, dimEl = null, cur = -1, curSrc = null, curId = null;
+  var layers = null, stageEl = null, dimEl = null, mvEl = null, cur = -1, curSrc = null, curId = null;
   var timer = null, token = 0, cleanT = [null, null];
 
   function init() {
     if (layers) return;
-    stageEl = N.$('stage'); dimEl = stageEl.querySelector('.stage-dim');
+    stageEl = N.$('stage'); dimEl = stageEl.querySelector('.stage-dim'); mvEl = stageEl.querySelector('.mv');
     layers = [stageEl.querySelector('.bd.a'), stageEl.querySelector('.bd.b')];
   }
   S.info = function (post) {
@@ -28,7 +28,7 @@
     var finished = false;
     function show() {
       if (finished || my !== token) return; finished = true;
-      L.className = 'bd' + (info.bleed ? ' bleed' : '') + ' kb' + (info.id % 4) + ' on';
+      L.className = 'bd' + (info.bleed ? ' bleed' : '') + ' on';
       stageEl.classList.toggle('has-bleed', !!info.bleed);
       if (old) {
         old.classList.remove('on'); old.classList.add('out');
@@ -57,6 +57,9 @@
   S.cancel = function () { clearTimeout(timer); };
   S.dim = function (level) { init(); dimEl.style.opacity = level; };
   S.details = function (on) { init(); stageEl.classList.toggle('details', !!on); };
+  S.neutral = function (on) { init(); stageEl.classList.toggle('neutral', !!on); };
+  // hero backdrop follows the home page scroll (clamped one screen up); 0 resets
+  S.offset = function (ty) { init(); mvEl.style.transform = ty ? 'translateY(' + Math.max(ty, -1080) + 'px)' : ''; };
   S.hide = function () { init(); stageEl.style.display = 'none'; };
   S.restore = function () { init(); stageEl.style.display = ''; };
 })();

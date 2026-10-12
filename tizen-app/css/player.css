@@ -1,0 +1,125 @@
+/* player (player.js): tvOS 15+ transport bar, glyph buttons + popovers, bottom Episodes/Info panel, up-next, AVPlay. Loaded last. */
+/* ---------- player ---------- */
+#player{position:fixed;left:0;top:0;width:1920px;height:1080px;background:#000;z-index:50;overflow:hidden}
+#video{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#000}
+#player-poster{position:absolute;left:0;top:0;width:1920px;height:1080px;object-fit:cover;opacity:0;transition:opacity 300ms;z-index:1;pointer-events:none}
+#player.loading #player-poster{opacity:.35}
+#subtitle{position:absolute;left:100px;right:100px;bottom:110px;text-align:center;font-weight:500;font-size:46px;line-height:1.4;color:var(--label-1);white-space:pre-line;z-index:5;transition:transform 400ms var(--e-sheet)}
+/* direction + font follow the subtitle language (player.js setSub), not the UI: Latin digits in English cues, Persian digits in Persian cues */
+#subtitle{unicode-bidi:plaintext;font-family:"Vz",sans-serif}
+#subtitle.sub-fa{font-family:"VzFD","Vz",sans-serif;line-height:1.6}
+/* appearance (N.subStyle.apply sets colour/size/weight inline + one .sb-* class; also used by the Settings preview). Cue text is span.cue.
+   Outlines are text-shadow only (-webkit-text-stroke breaks Persian joins); the boxes wrap each line (box-decoration-break). */
+.subs.sb-shadow{text-shadow:0 0 4px #000,0 2px 6px #000}
+.subs.sb-outline{text-shadow:-.05em -.05em 0 #000,.05em -.05em 0 #000,-.05em .05em 0 #000,.05em .05em 0 #000,0 -.06em 0 #000,0 .06em 0 #000,-.06em 0 0 #000,.06em 0 0 #000,0 .04em .14em rgba(0,0,0,.8)}
+.subs .cue{padding:.04em .32em;border-radius:.16em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.subs.sb-box .cue{background:rgba(0,0,0,.62)}
+.subs.sb-solid .cue{background:#000}
+#player.osd-on #subtitle{transform:translateY(-290px)}
+#player.panel #subtitle{transform:translateY(-440px)}
+
+/* ---------- OSD chrome ---------- */
+#osd{position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:4;transition:opacity 250ms var(--e-fade)}
+#osd.off{opacity:0}
+#player.loading #osd{opacity:1}
+#player.panel #osd{opacity:0}
+.p-top{position:absolute;left:0;top:0;width:1920px;height:180px;background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,0))}
+.p-bot{position:absolute;left:0;bottom:0;width:1920px;height:520px;background:linear-gradient(0deg,rgba(0,0,0,.85) 0,rgba(0,0,0,.5) 45%,rgba(0,0,0,0) 100%)}
+#osd-clock{position:absolute;top:60px;inset-inline-end:90px;font-size:25px;color:var(--label-2)}
+#osd-sub{position:absolute;top:722px;inset-inline-start:90px;max-width:1200px;font-size:25px;line-height:34px;font-weight:600;color:var(--label-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#osd-title{position:absolute;top:756px;inset-inline-start:90px;max-width:1200px;font-size:48px;line-height:58px;font-weight:700;white-space:nowrap}
+#osd-title>span{display:inline-block;max-width:100%;vertical-align:top;overflow:hidden;text-overflow:ellipsis}
+#osd-btns{position:absolute;top:862px;inset-inline-end:90px;display:flex;gap:20px}
+/* transport: centred, physical LTR in both languages (media controls are not mirrored); P.ctls Left/Right follows screen order */
+#osd-tp{position:absolute;top:862px;left:0;width:1920px;direction:ltr;display:flex;justify-content:center;gap:28px;pointer-events:none}
+#osd-tp .btn{margin:0;pointer-events:auto}
+#osd-tp .ico{width:40px;height:40px;stroke-width:1.7}
+#osd-btns .btn+.btn{margin:0}
+/* subtitle (z5) sits above #osd (z4) so cues stay white over the .p-bot gradient; #pglyph/#skip-btn/#upnext/#player-panel/#pop stay above it */
+#osd-btns,#osd-tp,#osd-title,#osd-sub{transition:opacity 150ms}
+#player.seeking #osd-btns,#player.seeking #osd-tp,#player.seeking #osd-title,#player.seeking #osd-sub{opacity:0}
+#osd-btns .q{font-size:23px;font-weight:700}
+
+/* ---------- scrubber (LTR in both languages) ---------- */
+#scrub{position:absolute;left:90px;top:962px;width:1740px;height:8px;direction:ltr}
+#scrub .trk{position:absolute;left:0;top:0;width:100%;height:8px;border-radius:4px;background:rgba(255,255,255,.28);overflow:hidden}
+#scrub .trk i{position:absolute;left:0;top:0;width:100%;height:100%;transform-origin:left;transform:scaleX(0)}
+#scrub .buf{background:rgba(255,255,255,.45)}
+#scrub .fill{background:#fff}
+#scrub .thumb{position:absolute;left:-2px;top:-10px;width:4px;height:28px;border-radius:2px;background:#fff;opacity:0;transition:opacity 150ms;will-change:transform}
+#player.paused #scrub .thumb,#scrub.seeking .thumb,#scrub.nudge .thumb{opacity:1}
+#scrub .bubble{position:absolute;left:0;bottom:30px;opacity:0;transition:opacity 150ms;will-change:transform}
+#scrub .bubble>div{transform:translateX(-50%);height:48px;padding:0 20px;border-radius:999px;background:var(--panel);font-size:25px;font-weight:600;line-height:48px;white-space:nowrap;font-variant-numeric:tabular-nums}
+#scrub .bubble em{font-style:normal;color:var(--label-2);margin-inline-start:12px}
+html[dir=rtl] #scrub .bubble>div{direction:rtl}
+#scrub.seeking .bubble{opacity:1}
+#osd-time{position:absolute;left:0;top:990px;width:1920px;direction:ltr;font-size:23px;font-weight:600;color:var(--label-2);font-variant-numeric:tabular-nums}
+#osd-t1{position:absolute;left:90px}
+#osd-t2{position:absolute;right:90px}
+
+/* ---------- play/pause glyph, spinner ---------- */
+#pglyph{position:absolute;left:900px;top:480px;width:120px;height:120px;border-radius:50%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.9);z-index:6;pointer-events:none}
+#pglyph .ico{width:48px;height:48px}
+#pglyph.pulse{animation:glyph 700ms var(--e-fade) forwards}
+@keyframes glyph{0%{opacity:0;transform:scale(.9)}30%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
+#player-spin{position:absolute;left:928px;top:508px;width:64px;height:64px;border-radius:50%;border:5px solid rgba(255,255,255,.2);border-top-color:#fff;z-index:9;animation:spin 900ms linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- skip intro / up next (bottom-end, above the glyph buttons; never move with the OSD) ---------- */
+#skip-btn{position:absolute;bottom:238px;inset-inline-end:90px;height:72px;padding:0 36px;border-radius:999px;background:#fff;color:#000;font-size:31px;font-weight:600;line-height:72px;z-index:6;opacity:0;transform:translateY(16px);transition:opacity 300ms,transform 300ms var(--e-focus);pointer-events:none}
+#skip-btn.show{opacity:1;transform:none}
+#upnext{position:absolute;bottom:238px;inset-inline-end:90px;width:436px;padding:16px;border-radius:30px;background:rgba(28,28,30,.85);box-shadow:0 20px 50px rgba(0,0,0,.45);z-index:6;opacity:0;transform:translateY(16px);transition:opacity 300ms,transform 300ms var(--e-focus);pointer-events:none}
+#upnext.show{opacity:1;transform:none}
+#upnext .th{position:relative;width:404px;height:228px;border-radius:14px;overflow:hidden;background:var(--bg-3) center/cover no-repeat}
+#upnext .cd{position:absolute;left:0;bottom:0;width:100%;height:4px;background:#fff;transform:scaleX(0);transform-origin:left}
+html[dir=rtl] #upnext .cd{transform-origin:right}
+#upnext.count .cd{animation:cd 10s linear forwards}
+#upnext.hold .cd{animation-play-state:paused}
+@keyframes cd{to{transform:scaleX(1)}}
+#upnext .tx{margin-top:14px;padding:0 6px}
+#upnext .u1{font-size:23px;line-height:34px;font-weight:600;color:var(--label-2)}
+#upnext .u2{font-size:29px;line-height:42px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#upnext .ub{display:flex;gap:12px;margin-top:14px}
+#upnext .ub span{position:relative;isolation:isolate;display:block;flex:0 1 auto;min-width:0;height:56px;padding:0 22px;border-radius:999px;background:var(--fill-1);font-size:23px;font-weight:600;line-height:56px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#upnext .ub span.focus{background:#fff;color:#000}
+
+/* ---------- popover (subtitles / audio / quality) ---------- */
+#pop{position:absolute;bottom:238px;width:420px;max-height:660px;overflow:hidden;padding:12px;border-radius:24px;background:var(--panel);box-shadow:0 30px 80px rgba(0,0,0,.5);z-index:8;opacity:0;transform:translateY(12px) scale(.96);transform-origin:50% 100%;transition:opacity 150ms,transform 150ms var(--e-sheet);pointer-events:none}
+#pop.open{opacity:1;transform:none;transition-duration:200ms}
+#pop .ph{font-size:23px;line-height:34px;font-weight:600;color:var(--label-3);padding:12px 20px}
+.chk{position:relative;width:396px;height:64px;border-radius:14px;font-size:29px;font-weight:500;line-height:64px;padding-inline-start:64px;padding-inline-end:20px;transform:scale(1);transition:transform var(--d-focus-out) var(--e-unfocus)}
+.chk>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chk .ico{position:absolute;inset-inline-start:20px;top:18px;width:28px;height:28px;stroke-width:2.2;visibility:hidden}
+.chk.sel .ico{visibility:visible}
+.chk.focus{color:#000;transform:scale(1.03);transition:transform var(--d-focus-in) var(--e-focus)}
+.chk .sw{position:absolute;inset-inline-end:22px;top:19px;width:26px;height:26px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.chk.focus .sw{box-shadow:0 0 0 2px rgba(0,0,0,.2)}
+#pop .ph .bk{width:26px;height:26px;margin-inline-end:8px;vertical-align:-5px;stroke-width:2.2;transform:scaleX(-1)}
+html[dir=rtl] #pop .ph .bk{transform:none}
+/* appearance rows: label, value (+ swatch), chevron */
+.chk.opt{display:flex;align-items:center;padding-inline-start:20px}
+.chk.opt>span:first-child{flex:1;min-width:0}
+.chk.opt>.v{display:flex;align-items:center;gap:10px;flex:none;max-width:200px;margin-inline-start:12px;font-size:25px;color:var(--label-2)}
+.chk.opt>.v b{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chk.opt>.v .sw{position:static;flex:none;width:22px;height:22px}
+.chk.opt.focus>.v{color:rgba(0,0,0,.6)}
+.chk.opt .chev{position:static;visibility:visible;width:24px;height:24px;margin-inline-start:8px;color:var(--label-3)}
+.chk.opt.focus .chev{color:rgba(0,0,0,.45)}
+
+/* ---------- bottom panel (Episodes / Info) ---------- */
+#player-panel{position:absolute;bottom:0;inset-inline-start:40px;inset-inline-end:40px;height:460px;border-radius:36px 36px 0 0;background:rgba(28,28,30,.92);overflow:hidden;z-index:7;transform:translateY(100%);transition:transform 320ms var(--e-sheet)}
+#player-panel.open{transform:none;transition-duration:400ms}
+.pp-tabs{position:absolute;top:32px;inset-inline-start:50px;display:flex;gap:12px}
+.pp-body{position:absolute;top:120px;left:0;right:0;bottom:0;transition:opacity 120ms}
+.pp-body.sw{opacity:0}
+.pp-track{position:absolute;top:0;left:0;display:flex;gap:40px;padding-inline-start:50px;transition:transform var(--d-move) var(--e-move)}
+html[dir=rtl] .pp-track{left:auto;right:0}
+.pi-po{position:absolute;inset-inline-start:50px;top:0;width:160px;height:240px;border-radius:12px;object-fit:cover;background:var(--fill-3)}
+.pi-tx{position:absolute;inset-inline-start:250px;top:0;max-width:1200px}
+.pi-t{font-size:38px;line-height:52px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi-tx .meta{margin-top:6px;height:38px;font-size:25px;color:var(--label-2)}
+.pi-pl{margin-top:14px;font-size:29px;line-height:var(--lh-body);color:var(--label-2);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+
+body.av,body.av #player,body.av #app{background:transparent}
+body.av #video{display:none}
+html.avh,html.avh body{background:transparent}

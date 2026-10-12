@@ -10,21 +10,33 @@ N.config = {
     { location: 'IR', host: 'https://ir.kazem-api.com/api/v2' }
   ],
   // WEBTV key verified live (platform "WebTV"); ANDROIDTV key kept as fallback.
+  // If both stop being recognised, api.js reads the current WEBTV key from keySources and caches it.
+  keySources: [
+    'https://cdn.jsdelivr.net/npm/30nama-sdk/dist/api/request.js', // official SDK, ~5 KB
+    'https://30nama.tv/bundle.js' // official web TV app, ~1.5 MB
+  ],
   apiKeys: ['83hRzBabjDnuv9SmV2GFaftpxjhZSHXYe7UnBuX5DdANdpzPvXu46jvKZHPb97As', 'VdapnkLG9EHsSmF8yeKcb4253RAuN6YX'],
-  version: '1.0.0',
+  // Sent to the API as c-version-number. Matches the official WEBTV client (30nama.tv), whose key we use. Not the app's own version.
+  apiVersion: '1.2.0',
+  // App version; keep in sync with config.xml and package.json.
+  appVersion: '1.0.0',
   // TMDB v4 "API Read Access Token" (Bearer). Keep empty here; js/tmdb-token.js or localStorage 'tmdbToken' overrides. Empty = TMDB features off.
   tmdbToken: '',
   qrBase: 'https://30nama.com/auth/',
   qrPollMs: 5000,
   qrTimeoutMs: 60000,
-  heartbeatMs: 10000,
+  heartbeatMs: 30000,
   // Dev only: on localhost every outgoing request goes through tools/devserver.js.
   // Not under TizenBrew, which serves the app from http://127.0.0.1:8081/module/... on the TV itself.
   useProxy: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') && location.pathname.indexOf('/module/') !== 0 && location.port !== '8081'
 };
+// Safe-area window for shelves (mirrors --start/--end in css/base.css).
+N.layout = { start: 90, end: 1830 };
+// Persian/Arabic block; used to decide text direction and Persian titles.
+N.FA = /[\u0600-\u06FF]/;
 N.keys = {
   ENTER: 13, BACK: 10009, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, ESC: 27, BACKSPACE: 8,
-  PLAYPAUSE: 10252, PLAY: 415, PAUSE: 19, STOP: 413, FF: 417, RW: 412, IME_DONE: 65376, IME_CANCEL: 65385
+  RED: 403, GREEN: 404, PLAYPAUSE: 10252, PLAY: 415, PAUSE: 19, STOP: 413, FF: 417, RW: 412, IME_DONE: 65376, IME_CANCEL: 65385
 };
 N.store = {
   get: function (k, d) { try { var v = localStorage.getItem('n30.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },

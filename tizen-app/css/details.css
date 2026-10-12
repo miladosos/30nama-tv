@@ -1,0 +1,71 @@
+/* details screen (screens/details.js): tvOS product page. Title block bottom-anchored at y=900; sections (.d-secs) from y=960; review sheet. */
+/* ---------- above the fold ---------- */
+.d-page{position:absolute;left:0;top:0;width:1920px;height:1080px;transition:transform var(--d-move) var(--e-move)}
+.det-col{position:absolute;inset-inline-start:90px;bottom:180px;width:1100px;display:flex;flex-direction:column;transition:opacity 300ms var(--e-fade)}
+.det.xs .det-col{opacity:0}
+.d-title{font-size:var(--t-title1);font-weight:700;line-height:var(--lh-title);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;max-height:198px;max-width:1100px}
+.d-alt{margin-top:8px;font-size:31px;line-height:46px;font-weight:500;color:var(--label-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.d-meta{margin-top:20px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.d-meta .meta{margin-inline-end:8px}
+.d-next{margin-inline-start:8px;font-size:25px;line-height:38px;color:var(--label-2);white-space:nowrap}
+.d-btns{margin-top:32px;display:flex;align-items:center}
+.d-resume{margin-top:16px;font-size:25px;line-height:38px;color:var(--label-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.d-resume .dot-s{margin:0 16px}
+.d-plot{margin-top:28px;font-size:29px;line-height:var(--lh-body);color:var(--label-2);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;max-height:138px;max-width:960px}
+
+/* ---------- below the fold: sections ---------- */
+.d-secs{position:absolute;left:0;top:960px;width:1920px}
+.det .sec{position:relative;margin-bottom:56px}
+.det .sec-h{position:absolute;top:0;inset-inline-start:90px;margin:0;font-size:38px;line-height:48px;font-weight:700;color:var(--label-2);white-space:nowrap;transition:color 200ms var(--e-fade)}
+.det .sec.cur .sec-h{color:var(--label-1)}
+.dtr{position:absolute;top:72px;inset-inline-start:0;display:flex;align-items:flex-start;padding-inline-start:90px;padding-inline-end:90px;transition:transform var(--d-move) var(--e-move)}
+.dtr>*{margin-inline-end:40px}
+.sec-eps{height:440px}
+.sec-eps .tabs{position:absolute;top:0;inset-inline-start:90px;display:flex;gap:12px}
+.eps-w{position:absolute;top:92px;left:0;width:1920px;height:348px;transition:opacity 220ms var(--e-fade)}
+.eps-w.sw{opacity:0;transition:opacity 120ms var(--e-fade)}
+.eps-w .dtr{top:0}
+.sec-cast{height:360px}
+.sec-rev{height:388px}
+.sec-rec{height:520px}
+/* cast / crew faces: 180 circle, centred caption overflowing the card evenly */
+.k-face .art{background:var(--bg-3)}
+.k-face .ini{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:700;line-height:1;color:var(--label-2)}
+.k-face .cap{width:196px;margin-inline-start:-8px;margin-inline-end:-8px;text-align:center}
+/* first / last captions stop at the card edge (inside the 90..1830 window, 24px gaps kept). Margins sit on .cap (document direction), not on .ct/.cs, which may carry dir=ltr */
+.dtr>.k-face:first-child .cap{width:188px;margin-inline-start:0}
+.dtr>.k-face:last-child .cap{width:188px;margin-inline-end:0}
+.k-face .ct,.k-face .cs{text-align:center}
+.k-face .ct{font-size:25px;line-height:38px;font-weight:500}
+.k-face .cs{font-size:23px;line-height:35px;font-weight:400;color:var(--label-3)}
+/* information grid (not focusable) */
+.det .d-info{padding-top:72px}
+.ig{display:flex;flex-wrap:wrap;column-gap:40px;row-gap:36px;padding-inline-start:90px;padding-inline-end:90px}
+.igc{width:405px;flex:none}
+.igl{font-size:23px;line-height:34px;font-weight:600;color:var(--label-3)}
+.igv{margin-top:2px;font-size:27px;line-height:40px;font-weight:500;color:var(--label-1);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;max-height:80px}
+
+/* ---------- TMDB enrichment (only present when a token / mock is configured) ---------- */
+.d-title.has-logo .tt{opacity:0}
+.d-title .tt{transition:opacity 300ms var(--e-fade)}
+.det.tm .d-title{position:relative;display:flex;align-items:flex-end;min-height:128px}
+.det.tm .d-title .tt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.det.tm .d-title.has-logo{height:220px;max-height:220px}
+.det .d-title .logo{bottom:0;max-width:700px;max-height:220px}
+.d-meta .tmdb{display:inline-flex;align-items:center;height:34px;padding:0 10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.55);font-size:21px;font-weight:700;color:var(--label-2);direction:ltr}
+.card.k-rev{width:520px;height:284px;border-radius:var(--r-card-xl);background:var(--bg-2);padding:24px 28px;transform:scale(1);transition:transform var(--d-focus-out) var(--e-unfocus)}
+.card.k-rev.focus{background:var(--bg-3);transform:scale(1.05);transition:transform var(--d-focus-in) var(--e-focus)}
+.rvh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.rva{font-size:var(--t-body);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:330px}
+.rvr{font-size:var(--t-caption2);font-weight:700;color:var(--label-1);background:var(--brand);border-radius:8px;padding:2px 12px}
+.rvt{font-size:var(--t-caption2);line-height:1.55;color:var(--label-2);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden}
+.rv-sheet{position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:60;background:rgba(7,8,11,.9);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 240ms var(--e-fade)}
+.rv-sheet.show{opacity:1}
+.rv-box{width:1180px;background:var(--bg-2);border-radius:var(--r-sheet);padding:48px 56px 40px}
+.rv-h{display:flex;align-items:center;margin-bottom:24px}
+.rv-h .rva{font-size:var(--t-headline);max-width:700px}
+.rv-h .rvr{margin-inline-start:24px;font-size:var(--t-body)}
+.rv-h .rvd{margin-inline-start:auto;font-size:var(--t-caption2);color:var(--label-3)}
+.rv-body{max-height:480px;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(to bottom,#000 88%,transparent)}
+.rv-text{font-size:var(--t-body);line-height:1.65;color:var(--label-2);white-space:pre-line;transition:transform var(--d-move) var(--e-move);will-change:transform}
+.rv-f{display:flex;align-items:center;margin-top:28px}

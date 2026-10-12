@@ -1,0 +1,72 @@
+/* chrome: stage backdrop, app shell, sidebar rail, splash. */
+/* ---------- stage ---------- */
+#stage{position:fixed;left:0;top:0;width:1920px;height:1080px;z-index:0;background:#000;overflow:hidden}
+body.playing #stage{display:none}
+#stage .mv{position:absolute;left:0;top:0;width:1920px;height:1080px;transition:transform var(--d-move) var(--e-move)}
+#stage .bd{position:absolute;left:0;top:0;width:1920px;height:1080px;object-fit:cover;opacity:0;transition:opacity var(--d-fade) var(--e-fade)}
+#stage .bd.on{opacity:1}
+#stage .bd.out{transition-delay:100ms}
+#stage .bd.bleed{left:auto;right:0;width:720px;object-fit:cover}
+html[dir=rtl] #stage .bd.bleed{right:auto;left:0}
+.bleed-mask{position:absolute;top:0;right:0;width:720px;height:1080px;background:linear-gradient(to right,#000 0,rgba(0,0,0,0) 360px);opacity:0}
+html[dir=rtl] .bleed-mask{right:auto;left:0;transform:scaleX(-1)}
+#stage.has-bleed .bleed-mask{opacity:1}
+.scrim-x{position:absolute;left:0;top:0;width:1920px;height:1080px;background:linear-gradient(to right,rgba(0,0,0,.82) 0%,rgba(0,0,0,.5) 32%,rgba(0,0,0,0) 62%)}
+html[dir=rtl] .scrim-x{transform:scaleX(-1)}
+#stage.details .scrim-x{background:linear-gradient(to right,rgba(0,0,0,.88) 0,rgba(0,0,0,.66) 40%,rgba(0,0,0,.3) 62%,rgba(0,0,0,0) 80%)}
+.scrim-b{position:absolute;left:0;top:0;width:1920px;height:1080px;background:linear-gradient(to top,#000 0%,rgba(0,0,0,.72) 20%,rgba(0,0,0,0) 50%)}
+.stage-dim{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#000;opacity:0;transition:opacity 300ms var(--e-fade)}
+.stage-neutral{position:absolute;left:0;top:0;width:1920px;height:1080px;background:linear-gradient(180deg,#1c1c1e 0%,#0a0a0a 55%,#000 100%);opacity:0;transition:opacity 300ms var(--e-fade)}
+#stage.neutral .stage-neutral{opacity:1}
+
+/* ---------- app shell ---------- */
+#app{position:fixed;left:0;top:0;width:1920px;height:1080px;z-index:1}
+body.playing #app{visibility:hidden}
+#content{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden}
+.screen{position:absolute;left:0;top:0;width:1920px;height:1080px}
+.screen.enter{animation:pageIn var(--d-page) cubic-bezier(.2,.8,.2,1) backwards}
+.screen.leave{opacity:0;transition:opacity 150ms var(--e-fade)}
+@keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ---------- sidebar (hidden floating panel; nothing drawn while collapsed) ---------- */
+#rail{position:fixed;left:0;top:0;width:1920px;height:1080px;z-index:3;pointer-events:none}
+body.playing #rail,#rail.gone{display:none}
+.rail-scrim{position:fixed;left:0;top:0;width:1920px;height:1080px;background:#000;opacity:0;transition:opacity 300ms var(--e-fade);pointer-events:none}
+#rail.open .rail-scrim{opacity:.55}
+.rail-panel{position:absolute;top:32px;bottom:32px;inset-inline-start:32px;width:400px;border-radius:36px;background:#1c1c1e;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 30px 80px rgba(0,0,0,.5);transform:translateX(calc(var(--dir) * -460px));opacity:0;transition:transform 320ms var(--e-sheet),opacity 200ms 120ms}
+#rail.open .rail-panel{transform:none;opacity:1;transition:transform 400ms var(--e-sheet),opacity 200ms}
+.rail-logo{position:absolute;top:44px;inset-inline-start:40px;height:44px}
+.rail-sep{position:absolute;top:216px;inset-inline-start:32px;inset-inline-end:32px;height:1px;background:var(--sep)}
+.rail-pill{position:absolute;top:0;inset-inline-start:20px;width:360px;height:72px;border-radius:999px;background:#fff;transition:transform 240ms var(--e-focus),opacity 150ms var(--e-fade)}
+#rail.blur .rail-pill{opacity:0}
+.rail-pill.tall{height:96px}
+.ri{position:absolute;inset-inline-start:20px;width:360px;height:72px;border-radius:999px;color:var(--label-2);pointer-events:auto;display:block}
+.ri .ico{position:absolute;inset-inline-start:24px;top:19px;width:34px;height:34px;stroke-width:1.6}
+.ri .lb{position:absolute;inset-inline-start:78px;top:0;font-size:31px;font-weight:600;line-height:72px;white-space:nowrap}
+.ri.cur{background:var(--fill-2);color:var(--label-1)}
+.ri.cur::after{content:'';position:absolute;inset-inline-end:28px;top:32px;width:8px;height:8px;border-radius:50%;background:var(--brand)}
+.ri.focus{color:#000;background:none}
+.ri.focus::after{display:none}
+.ri.prof{height:96px}
+.ri.prof.cur::after{top:44px}
+.prof .av{position:absolute;inset-inline-start:14px;top:22px;width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--fill-1);color:var(--label-1);font-size:22px;font-weight:700;line-height:52px;text-align:center}
+.prof .ok{position:absolute;inset-inline-start:48px;top:56px;width:24px;height:24px;border-radius:50%;background:#30d158;border:3px solid #1c1c1e;display:flex;align-items:center;justify-content:center;color:#fff}
+.prof .ok .ico{position:static;width:14px;height:14px;stroke-width:3} /* not the .ri .ico slot position */
+.prof.focus .ok{border-color:#fff}
+.prof .av img{display:block;width:52px;height:52px;object-fit:cover}
+.prof.focus .av{background:rgba(0,0,0,.12);color:#000}
+.prof .nm{position:absolute;inset-inline-start:80px;top:18px;max-width:260px;font-size:29px;font-weight:600;line-height:32px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prof .cp{position:absolute;inset-inline-start:80px;top:52px;max-width:260px;font-size:21px;font-weight:500;line-height:26px;color:var(--label-2);white-space:nowrap;overflow:hidden;display:flex;align-items:center}
+.prof.focus .cp{color:rgba(0,0,0,.6)}
+
+/* ---------- splash ---------- */
+#splash{position:fixed;left:0;top:0;width:1920px;height:1080px;background:#000;z-index:200}
+#splash.out{opacity:0;transition:opacity 300ms var(--e-fade)}
+.sp-logo{position:absolute;left:50%;top:50%;height:144px;margin-top:-72px;transform:translateX(-50%) scale(.96);opacity:0;animation:spIn 500ms var(--e-fade) 100ms both}
+@keyframes spIn{to{opacity:1;transform:translateX(-50%) scale(1)}}
+#splash .dots3{position:absolute;left:0;top:660px;width:1920px;display:flex;justify-content:center;opacity:0;transition:opacity 300ms}
+#splash .dots3.on{opacity:1}
+#splash .dots3 i{width:10px;height:10px;border-radius:50%;background:var(--label-2);margin:0 8px;animation:pulse2 900ms ease-in-out infinite alternate}
+#splash .dots3 i:nth-child(2){animation-delay:150ms}
+#splash .dots3 i:nth-child(3){animation-delay:300ms}
+body.calm #splash .dots3 i{animation:none;opacity:.7}

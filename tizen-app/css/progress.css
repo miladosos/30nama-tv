@@ -1,0 +1,29 @@
+/* In progress (continue watching) grid (screens/progress.js), plus Home's "See all" tile at the end of the CW row. */
+/* ---------- page ---------- */
+.pg{position:absolute;left:0;top:0;width:1920px;height:1080px;transition:transform var(--d-move) var(--e-move)}
+.noanim .pg{transition:none!important}
+.pg-h{position:absolute;top:60px;inset-inline-start:90px;max-width:1300px;font-size:57px;font-weight:700;line-height:var(--lh-title);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-h .cnt{font-size:25px;font-weight:500;color:var(--label-2);margin-inline-start:20px}
+/* colour-key legend: Red opens the card menu (same as press-and-hold OK) */
+.pg-hint{position:absolute;top:78px;inset-inline-end:90px;height:38px;display:flex;align-items:center;font-size:25px;line-height:38px;font-weight:500;color:var(--label-2)}
+.pg-hint .rk{width:20px;height:20px;border-radius:50%;background:var(--danger);margin-inline-end:12px}
+/* ---------- grid: 3 x 548 (k-cw), 48 column gap = 1740 ---------- */
+.pgrid{position:absolute;top:180px;inset-inline-start:90px;width:1740px;display:flex;flex-wrap:wrap;column-gap:48px;row-gap:40px;padding-bottom:120px}
+.pgrid .pcell{width:548px;height:410px}
+.pgrid .prog{inset-inline-start:20px;inset-inline-end:20px;bottom:20px;height:6px;border-radius:3px;background:rgba(255,255,255,.32)}
+.pgrid .sk-c{width:548px;height:308px;border-radius:16px;background:var(--fill-3)}
+/* removed card (also defined for Home in home.css; kept here so the grid does not depend on it) */
+.pgrid .card.gone .art{opacity:0;transform:scale(.9);transition:opacity 220ms var(--e-fade),transform 220ms var(--e-fade)}
+.pgrid .card.gone .cap{opacity:0;transition:opacity 150ms var(--e-fade)}
+.pgrid .card.gone .lift,.pgrid .card.gone .sheen{opacity:0}
+/* ---------- empty state ---------- */
+.pg-empty{position:absolute;left:0;top:0;width:1920px;height:1080px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.pg-empty>.ico{width:96px;height:96px;color:var(--label-3);stroke-width:1.2;margin-bottom:32px}
+.pg-empty .et{font-size:38px;line-height:var(--lh-head);font-weight:700}
+.pg-empty .eb{margin-top:12px;max-width:900px;font-size:29px;line-height:var(--lh-body);color:var(--label-2)}
+.pg-empty .btn{margin-top:48px}
+/* ---------- Home: "See all" tile closing the Continue Watching row (k-cw height, square) ---------- */
+.card.k-more{--w:308px}
+.k-more .art{background:var(--fill-2);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.k-more .ico{width:56px;height:56px;stroke-width:1.6;color:var(--label-1)}
+.k-more .ml{margin-top:16px;font-size:29px;line-height:44px;font-weight:600;color:var(--label-1)}

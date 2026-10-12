@@ -219,10 +219,13 @@
       if (!m) return null;
       var base = T.get('/' + m.kind + '/' + m.id, { language: 'en-US', append_to_response: 'credits,reviews,videos,images,recommendations,external_ids', include_image_language: 'en,null' },
         { ttl: TTL.details, slim: function (j) { return slimDetails(j, m.kind); } });
-      var loc = N.lang === 'fa' ? T.get('/' + m.kind + '/' + m.id, { language: 'fa-IR' }, { ttl: TTL.details, slim: function (j) { return { tagline: j.tagline || '', overview: j.overview || '' }; } }).catch(function () { return null; }) : Promise.resolve(null);
+      var loc = N.lang === 'fa' ? T.get('/' + m.kind + '/' + m.id, { language: 'fa-IR' }, { ttl: TTL.details, slim: function (j) { return { tagline: j.tagline || '', overview: j.overview || '', title: j.title || j.name || '' }; } }).catch(function () { return null; }) : Promise.resolve(null);
       return Promise.all([base, loc]).then(function (r) {
-        var d = r[0]; if (!r[1]) return d;
-        d = Object.assign({}, d); if (r[1].tagline) d.tagline = r[1].tagline; if (r[1].overview) d.overview = r[1].overview; return d;
+        var d = r[0], l = r[1]; if (!l) return d;
+        // Persian title / overview for the fa UI (N.plot reads _faPlot; Details shows _faTitle as the secondary line)
+        if (l.title && N.FA.test(l.title) && l.title !== N.titleEn(post)) post._faTitle = l.title;
+        if (l.overview && N.FA.test(l.overview)) post._faPlot = l.overview;
+        d = Object.assign({}, d); if (l.tagline) d.tagline = l.tagline; if (l.overview) d.overview = l.overview; return d;
       });
     });
   };

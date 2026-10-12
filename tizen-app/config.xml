@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
-        id="http://yourdomain.com/Nama30TV" version="0.1.0" viewmodes="maximized">
+        id="https://github.com/msharifi99/30nama-tizenos" version="1.0.0" viewmodes="maximized">
   <tizen:application id="Nama30TvAp.Nama30TV" package="Nama30TvAp" required_version="2.3"/>
   <content src="index.html"/>
   <feature name="http://tizen.org/feature/screen.size.all"/>
   <icon src="icon.png"/>
   <name>30nama</name>
+  <name xml:lang="fa">۳۰نما</name>
   <author>personal</author>
   <description>Unofficial 30nama client for Samsung Tizen TV</description>
   <tizen:privilege name="http://tizen.org/privilege/internet"/>

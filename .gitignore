@@ -24,3 +24,10 @@ tools-video/*.log
 # large media / screenshots (selected ones live in docs/images)
 media/*.mp4
 design/shots/
+
+# browser-automation output (Playwright MCP)
+.playwright-mcp/
+
+# official client packages used for API reference (never commit)
+*.deb
+*.apk

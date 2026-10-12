@@ -1,0 +1,34 @@
+/* login screen (screens/login.js). */
+/* ---------- login (official look) ---------- */
+.lg-bg,.lg-glow{position:absolute;left:0;top:0;width:1920px;height:1080px}
+.lg-bg{background:linear-gradient(180deg,#000 0%,#1f1f1f 100%)}
+.lg-glow{background:radial-gradient(1100px 760px at 0% 0%,rgba(248,68,67,.16),rgba(248,68,67,0) 62%)}
+html[dir=rtl] .lg-glow{transform:scaleX(-1)}
+.login{overflow:hidden}
+.lg-mark{position:absolute;height:1100px;top:-180px;inset-inline-end:-260px;opacity:.06}
+.lg-logo{position:absolute;top:96px;inset-inline-start:120px;height:88px}
+.lg-col{position:absolute;top:300px;inset-inline-start:120px;width:860px}
+.lg-h{font-size:57px;line-height:var(--lh-title);font-weight:700}
+.lg-p{margin-top:24px;font-size:29px;line-height:var(--lh-body);color:var(--label-2)}
+.lg-url{margin-top:28px;font-size:38px;font-weight:700;line-height:1.26}
+.lg-code{margin-top:16px;display:inline-flex;align-items:center;height:96px;padding:0 36px;border-radius:20px;background:var(--fill-2);border:2px solid rgba(255,255,255,.12)}
+.lg-code span{font-size:57px;font-weight:700;letter-spacing:.12em;margin-inline-end:-.12em;line-height:1;font-variant-numeric:tabular-nums}
+.lg-code span:empty::before{content:'\2007\2007\2007\2007\2007\2007'}
+.lg-col .qr-status{margin-top:36px;display:flex;align-items:center;font-size:25px;color:var(--label-2);line-height:34px}
+.qr-status i{flex:none;width:12px;height:12px;border-radius:50%;background:#fff;margin-inline-end:14px;animation:pulse2 1.2s ease-in-out infinite alternate}
+body.calm .qr-status i{animation:none}
+.login .acts{margin-top:56px;display:flex}
+.qr-tile{position:absolute;top:250px;inset-inline-end:160px;width:520px;height:520px;padding:36px;border-radius:40px;background:#d9d9d9;box-shadow:0 40px 120px rgba(0,0,0,.6)}
+.qr-tile .qr{width:448px;height:448px;transition:opacity 260ms var(--e-fade)}
+.qr-tile .qr svg{display:block;width:448px;height:448px}
+.qr-tile .qr svg rect{fill:transparent}
+.qr-tile .qr svg path{fill:#141414}
+.qr-tile .exp{position:absolute;left:0;top:0;width:520px;height:520px;border-radius:40px;background:rgba(217,217,217,.94);display:flex;align-items:center;justify-content:center;text-align:center;padding:0 40px;font-size:38px;font-weight:700;line-height:var(--lh-head);color:#141414;opacity:0;transition:opacity 260ms var(--e-fade)}
+.qr-tile.dim .exp{opacity:1}
+.qr-tile .ok{position:absolute;left:180px;top:180px;width:160px;height:160px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.9);transition:opacity 260ms var(--e-fade),transform 260ms var(--e-sheet)}
+.qr-tile .ok .ico{width:80px;height:80px;stroke-width:2.2}
+.qr-tile.done .ok{opacity:1;transform:none}
+.lg-notes{position:absolute;top:812px;inset-inline-end:160px;width:520px;text-align:center}
+.lg-notes .nt{font-size:31px;font-weight:700;line-height:var(--lh-head)}
+.lg-notes .nf span{white-space:nowrap}
+.lg-notes .nf{margin-top:6px;font-size:25px;line-height:var(--lh-cap);color:var(--label-2)}

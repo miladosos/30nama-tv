@@ -5,7 +5,8 @@ exports.run=async function(tour,{dry,outDir,warm}){
  const b=await p.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,defaultViewport:{width:1920,height:1080,deviceScaleFactor:1},userDataDir:'./profile2',args:['--force-device-scale-factor=1','--autoplay-policy=no-user-gesture-required']});
  const pg=await b.newPage(); const c=await pg.createCDPSession();
  await pg.goto('http://localhost:8080/',{waitUntil:'domcontentloaded'});
- await pg.evaluate(()=>{localStorage.setItem('n30.guest','true')});
+ await pg.evaluate(l=>{localStorage.setItem('n30.guest','true');localStorage.setItem('n30.lang',JSON.stringify(l));},process.env.UI_LANG||'fa');
+ await pg.reload({waitUntil:'domcontentloaded'});
  let n=0, frame=0, FR=1000/30;
  if(outDir){fs.rmSync(outDir,{recursive:true,force:true});fs.mkdirSync(outDir,{recursive:true});}
  const ctx={
