@@ -86,6 +86,18 @@ node tools/devserver.js 8080
 
 Then open http://localhost:8080/. The proxy forwards API and HLS requests to avoid CORS. See `tizen-app/README.md` for developer notes and `design/DESIGN.md` for the design spec.
 
+### CI and releases
+
+Every push to `main` and every pull request runs `.github/workflows/ci.yml`: an ES5 syntax check of `tizen-app/js` (`tizen-app/tools/check.js`) and a headless smoke test that boots the app in Persian and English (`tizen-app/tools/smoke.js`).
+
+To publish a release, push a version tag:
+
+```
+git tag v1.0.1 && git push origin v1.0.1
+```
+
+`.github/workflows/release.yml` runs CI, builds the `.wgt` (version taken from the tag), and attaches it to a GitHub Release.
+
 ## Structure
 
 ```
@@ -93,7 +105,7 @@ tizen-app/    the Tizen web app (config.xml, index.html, js/, css/, fonts/, tool
 design/       design spec
 docs/        README screenshots, TizenBrew notes
 package.json TizenBrew module manifest
-.github/     release workflow (experimental, manual run)
+.github/     CI (ES5 + smoke test) and tag-triggered .wgt release
 media/        poster
 build.sh      build, sign and install
 install-wizard.sh  guided TV setup

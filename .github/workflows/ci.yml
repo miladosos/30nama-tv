@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: ES5 + file checks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm i --no-save --no-package-lock acorn@8.12.1
+      - run: node tizen-app/tools/check.js
+
+  smoke:
+    name: Headless smoke test (fa + en)
+    runs-on: ubuntu-24.04
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm i --no-save --no-package-lock playwright@1.48.2
+      - run: npx playwright install --with-deps chromium
+      - name: Start dev server
+        working-directory: tizen-app
+        run: |
+          node tools/devserver.js 8080 > /tmp/devserver.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:8080/ && exit 0; sleep 1; done
+          cat /tmp/devserver.log; exit 1
+      - run: node tizen-app/tools/smoke.js http://localhost:8080/

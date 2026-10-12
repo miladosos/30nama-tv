@@ -1,19 +1,26 @@
 name: Release wgt
 
-# EXPERIMENTAL, manual only (Actions > Release wgt > Run workflow): build tizen-app/ into a .wgt signed with a throwaway author
-# certificate generated on the runner, and attach it to a GitHub Release.
+# Push a tag like v1.2.3 to run CI, build tizen-app/ into a .wgt signed with a throwaway author certificate
+# generated on the runner, and publish it as a GitHub Release asset. A manual run (Actions > Release wgt > Run workflow)
+# only builds and uploads the .wgt as a workflow artifact.
 # The package is meant to be RE-SIGNED by the user's installer
 # (e.g. Apps2Samsung) with their own Samsung certificate, so the throwaway
 # cert is discarded after the build. No TMDB token is ever included.
 
 on:
+  push:
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   wgt:
+    needs: ci
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -36,8 +43,10 @@ jobs:
           mkdir -p stage/web
           cp -r tizen-app/. stage/web/
           rm -rf stage/web/tools stage/web/js/tmdb-token.js
+          echo '/* TMDB disabled */' > stage/web/js/tmdb-token.js
           VER="${GITHUB_REF_NAME#v}"
-          if [[ "$GITHUB_REF_TYPE" == "tag" && "$VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            [[ "$VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "tag must look like v1.2.3"; exit 1; }
             sed -i -E "s/(<widget [^>]*version=\")[^\"]*(\")/\1${VER}\2/" stage/web/config.xml
           fi
           grep -o 'version="[^"]*"' stage/web/config.xml | head -1
@@ -58,7 +67,7 @@ jobs:
         run: |
           WGT="$(ls dist/*.wgt | head -1)"
           unzip -l "$WGT"
-          if unzip -l "$WGT" | grep -E 'tmdb-token\.js|/tools/|\.p12|\.pwd'; then echo "forbidden file in wgt"; exit 1; fi
+          if unzip -l "$WGT" | grep -E '/tools/|\.p12|\.pwd'; then echo "forbidden file in wgt"; exit 1; fi
           unzip -p "$WGT" 'js/*' config.xml index.html | grep -q 'eyJ' && { echo "JWT-like string in wgt"; exit 1; } || true
           unzip -l "$WGT" | grep -q author-signature.xml
           unzip -l "$WGT" | grep -q signature1.xml
