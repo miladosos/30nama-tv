@@ -379,7 +379,7 @@ y 1036 │  next row header peeks (scroll affordance)
   - **About:** version, a "Unofficial client" note, and the active API host.
 
 ### 9.9 Player overlay (OSD)
-OSD states: **hidden** → **peek** (any key: top and bottom chrome, auto-hide after 4 s while playing) → **paused** (chrome stays, plus a center glyph).
+OSD states: **hidden** → **peek** (any key: top and bottom chrome, auto-hide after 5 s while playing, also with a control focused; Up past the top of the controls hides at once; Back hides the chrome first, a second Back exits) → **paused** (chrome stays, plus a center glyph).
 
 **Top chrome:** a static gradient band, 240px tall, from `rgba(0,0,0,.7)` to 0.
 - At x=96, y=64: the title (`--t-l` 700). Below it, the episode line "S2 · E5 — Episode title" (`--t-body` text-2).

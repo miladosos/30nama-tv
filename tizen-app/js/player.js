@@ -428,13 +428,19 @@
   function syncSkip() { $('skip-btn').classList.toggle('idle', P.ctl >= 0); }
   function doSkip() { if (!P.skip || !P.be) return; var to = P.skip.to; P.hideSkip(); P.be.seek(to); P.showOsd(); }
   $('skip-btn').onclick = doSkip;
+  // auto-hide after 5 s while playing, also with a control focused (focus is dropped with it); paused / popover / panel keep it up
   P.showOsd = function () {
     $('osd').classList.remove('off'); $('player').classList.add('osd-on'); clearTimeout(P.osdTimer);
-    P.osdTimer = setTimeout(function () {
-      if (P.paused || P.popOpen || P.panelOpen || P.ctl >= 0) return;
-      $('osd').classList.add('off'); $('player').classList.remove('osd-on');
-    }, 4000);
+    P.osdTimer = setTimeout(function () { if (!(P.paused || P.popOpen || P.panelOpen)) P.hideOsd(); }, 5000);
   };
+  P.hideOsd = function () {
+    clearTimeout(P.osdTimer);
+    if (P.ctl >= 0) { P.ctl = -1; N.nav.clear(); syncSkip(); }
+    $('osd').classList.add('off'); $('player').classList.remove('osd-on');
+  };
+  function osdVisible() { return !$('osd').classList.contains('off'); }
+  // Skip / Up next on screen: it sits above the controls row and holds OK while no control is focused
+  function cardUp() { return !!P.skip || !!(unState && $('upnext').classList.contains('show')); }
   P.glyph = function (kind) { // kind: 'play' | 'pause' | false
     var g = $('pglyph'); clearTimeout(glyphT);
     g.classList.remove('pulse');
@@ -744,16 +750,19 @@
   }
   P.onKey = function (e) {
     if (!P.open) return false;
-    var k = e.keyCode, back = k === K.BACK || k === K.ESC || k === K.BACKSPACE;
+    var k = e.keyCode, back = k === K.BACK || k === K.ESC || k === K.BACKSPACE, vis = osdVisible();
     if (P.popOpen) { if (back) { if (P.popSub) popBack(); else closePop(); return true; } return mediaKey(k); } // spatial nav runs inside the popover scope
     if (P.panelOpen) { if (back) { closePanel(); return true; } return mediaKey(k); }
-    if (P.ctl >= 0) { // controls row focused (no auto-hide); other keys (media, FF/RW) fall through
+    if (P.ctl >= 0) { // controls row focused; other keys (media, FF/RW) fall through
       P.showOsd();
       if (k === K.LEFT || k === K.RIGHT) { ctlMove(k === K.LEFT ? 'left' : 'right'); return true; }
-      if (k === K.DOWN || back) { unfocusCtl(); return true; }
       if (k === K.ENTER) { var c = P.ctls[P.ctl]; if (c._tp) c.onclick(); else openPop(c._kind); return true; }
-      if (k === K.UP) { if (P.skip || (unState && $('upnext').classList.contains('show'))) unfocusCtl(); return true; } // up to Skip / Up next
+      // Up: to Skip / Up next above the row, else past the top hides the chrome; Back hides it too
+      if (k === K.UP) { if (cardUp()) unfocusCtl(); else P.hideOsd(); return true; }
+      if (back) { P.hideOsd(); return true; }
+      if (k === K.DOWN) { P.ctl = -1; syncSkip(); openPanel(P.items.length > 1 ? 'eps' : 'info'); return true; }
     }
+    if (back && vis && !P.loading) { P.hideOsd(); return true; } // YouTube-style: Back hides the chrome first, a second Back exits
     if (back || k === K.STOP) { P.close(); return true; }
     P.showOsd();
     if (unState && $('upnext').classList.contains('show')) {
@@ -776,6 +785,8 @@
     if (k === K.RIGHT) { P.seekBy(10); return true; }
     if (k === K.RW) { P.seekBy(-30); return true; }
     if (k === K.FF) { P.seekBy(30); return true; }
+    // Skip / Up next holding focus with the chrome up: Up goes past the top (hides), Down steps to the row below it
+    if (vis && cardUp() && (k === K.UP || k === K.DOWN)) { if (k === K.UP) P.hideOsd(); else focusKind('pp'); return true; }
     if (k === K.UP) { focusKind('pp'); return true; } // also from hidden: one press reaches Play/Pause
     if (k === K.GREEN) { focusKind('sub'); openPop('sub'); return true; }
     if (k === K.RED) { P.cycleSub(); return true; }
